@@ -5,6 +5,7 @@ import PaginationWrapper from '../../components/Pagination'
 import SearchDropdown from '../../components/SearchDropdown'
 import Selector from '../../components/Selector'
 import { GETInitSearchOptions, getSearchResults } from '../../utils/api'
+import NoAccessTokenState from './NoAccessTokenState'
 import ResultItem from './ResultIem/ResultItem'
 
 export enum SortBy {
@@ -23,6 +24,7 @@ const SortSelectionStyled = styled(Selector)``
 const SearchDropdownStyled = styled(SearchDropdown)`
   display: flex;
   max-width: 20em;
+  margin-bottom: 1em;
 `
 const SearchPageStyled = styled.div``
 
@@ -51,6 +53,9 @@ export default function SearchPage() {
     if (!searchValue.length) return
     fetchAndSetSearchResults()
   }, [page, searchValue, sort, fetchAndSetSearchResults])
+
+  if (!searchResults.items) return <NoAccessTokenState />
+
   if (!searchResults.items.length && !isLoading)
     return (
       <SearchPageStyled>
@@ -63,6 +68,7 @@ export default function SearchPage() {
         <EmptyStateStyled>Empty List</EmptyStateStyled>
       </SearchPageStyled>
     )
+
   return (
     <SearchPageStyled>
       <SearchDropdownStyled
@@ -71,7 +77,6 @@ export default function SearchPage() {
           setSearchValue(searchValue)
         }}
       />
-      {!searchResults.length && !isLoading}
       {!isLoading ? (
         <>
           <SortSelectionStyled
@@ -79,16 +84,16 @@ export default function SearchPage() {
             setSelected={setSort}
             options={Object.entries(SortBy)}
           />
-          <ResultsListStyled>
-            {searchResults.items.map((resultItem: any, index: number) => {
-              return <ResultItem key={index} data={resultItem}></ResultItem>
-            })}
-          </ResultsListStyled>
           <PaginationWrapper
             maxPage={Math.ceil(searchResults.total_count / DEFAULT_PAGE_SIZE)}
             currentPage={page}
             getPageData={(newPage) => setPage(newPage)}
           />
+          <ResultsListStyled>
+            {searchResults.items.map((resultItem: any, index: number) => {
+              return <ResultItem key={index} data={resultItem}></ResultItem>
+            })}
+          </ResultsListStyled>
         </>
       ) : (
         <CircularProgress />
