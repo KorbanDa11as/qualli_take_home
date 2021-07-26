@@ -3,14 +3,17 @@ import { CircularProgress, TextField } from '@material-ui/core'
 import styled from '@emotion/styled'
 import React, { useEffect, useState } from 'react'
 import { GETInitSearchOptions } from '../utils/api'
+const TextFieldStyled = styled(TextField)``
 const SearchDropdownStyled = styled.div``
 interface SearchDropdownProps {
   fetchOptions: any
   onSearch: any
+  className?: string
 }
 export default function SearchDropdown({
   fetchOptions,
   onSearch,
+  className,
 }: SearchDropdownProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [options, setOptions] = useState<string[]>(['Loading...'])
@@ -18,14 +21,14 @@ export default function SearchDropdown({
 
   async function handleInitialization() {
     const opts = GETInitSearchOptions()
-    console.log(`opts`, opts)
     setOptions(opts.map((opt) => opt.name))
     setIsLoading(false)
   }
 
-  function handleSearch(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleSearch(e: React.KeyboardEvent<HTMLDivElement>, params: any) {
     if (e.key === 'Enter') {
       onSearch(searchValue)
+      params.ref.current.blur()
     }
   }
   useEffect(() => {
@@ -34,12 +37,14 @@ export default function SearchDropdown({
   return (
     <SearchDropdownStyled>
       <Autocomplete
+        className={className}
         options={options}
         loading={isLoading}
+        freeSolo
         renderInput={(params) => (
-          <TextField
+          <TextFieldStyled
             {...params}
-            onKeyUp={handleSearch}
+            onKeyUp={(e) => handleSearch(e, params.inputProps)}
             label='Search'
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
