@@ -20,7 +20,7 @@ export interface RepoItem {
 
 function setHeaders() {
   return {
-    Authorization: 'Token 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',
+    Authorization: 'Token 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',
     Accept: 'application/vnd.github.mercy-preview+json ',
   }
 }
