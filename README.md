@@ -1,7 +1,7 @@
 # Getting Started
 
 after you have cloned the repo
-run `npm nstall`
+run `npm install`
 
 after you have setup the Access Token (see below section) run `npm start`
 
